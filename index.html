@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Neumorphic Clock – Minimal iOS Widget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ───────── THEME ───────── */
+:root{
+  --bg-color:#d6d6d8;
+  --widget-bg:#e8e8ea;
+  --text-primary:#1a1a1a;
+  --text-secondary:#666;
+  --clock-hands:#1c1c1e;
+}
+
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg-color);
+  color:var(--text-primary);
+  display:flex;flex-direction:column;min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ───────── NAV ───────── */
+nav{padding:30px 40px;background:var(--bg-color)}
+.nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.1rem;font-weight:600;letter-spacing:-.02em}
+.nav-links{display:flex;gap:30px}
+.nav-links a{color:var(--text-secondary);text-decoration:none;font-weight:500;font-size:.9rem;transition:color .3s}
+.nav-links a:hover{color:var(--text-primary)}
+
+/* ───────── HERO ───────── */
+.hero{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 40px 100px}
+.hero-content{max-width:600px;text-align:center;animation:fadeIn 1s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:clamp(2.5rem,5vw,3.5rem);font-weight:600;margin-bottom:16px;line-height:1.1;letter-spacing:-.03em}
+.subtitle{font-size:clamp(1.1rem,2vw,1.25rem);color:var(--text-secondary);margin-bottom:60px;font-weight:400}
+
+/* ───────── WIDGET SHELL ───────── */
+.widget-container{
+  width:320px;height:320px;margin:0 auto 60px;
+  border-radius:44px;
+  background:linear-gradient(145deg,#f0f0f2,#d0d0d2);
+  box-shadow:20px 20px 40px rgba(0,0,0,.08),-20px -20px 40px rgba(255,255,255,.7),inset 1px 1px 1px rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.widget-container::before{
+  content:'';position:absolute;inset:-1px;border-radius:44px;padding:1px;
+  background:linear-gradient(145deg,rgba(255,255,255,.5),rgba(0,0,0,.05));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+
+/* ───────── CLOCK ───────── */
+.clock{width:280px;height:280px;position:relative;display:flex;align-items:center;justify-content:center}
+.minute-markers{position:absolute;inset:0}
+
+/* tick marks */
+.tick{
+  position:absolute;top:50%;left:50%;
+  background:#6e6e70;border-radius:1px;
+  transform-origin:50% 50%;
+}
+
+/* hands */
+.clock-hand{
+  position:absolute;left:50%;bottom:50%;
+  transform-origin:50% 100%;
+  border-radius:3px;background:var(--clock-hands);
+  box-shadow:0 1px 3px rgba(0,0,0,.1)
+}
+.hour-hand{width:6px;height:80px}
+.minute-hand{width:5px;height:110px}
+.second-hand{width:2px;height:115px;background:#ff3b30;box-shadow:none}
+
+.clock-center{
+  position:absolute;width:12px;height:12px;background:#fff;border:3px solid var(--clock-hands);
+  border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;box-shadow:0 2px 4px rgba(0,0,0,.1)
+}
+
+/* ───────── CTA BUTTON ───────── */
+.cta-button{
+  display:inline-flex;align-items:center;gap:10px;padding:16px 34px;
+  border:none;cursor:pointer;border-radius:54px;
+  background:linear-gradient(180deg,#202020 0%,#0e0e0e 100%);
+  color:#fff;text-decoration:none;font-weight:500;font-size:1rem;
+  box-shadow:0 4px 14px rgba(0,0,0,.25),0 1px 2px rgba(255,255,255,.07) inset,0 -1px 2px rgba(0,0,0,.4) inset;
+  transition:transform .25s ease,box-shadow .25s ease;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.cta-button:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.35),0 1px 2px rgba(255,255,255,.07) inset,0 -1px 2px rgba(0,0,0,.45) inset}
+.cta-button:active{transform:translateY(0);box-shadow:0 3px 12px rgba(0,0,0,.3),0 1px 2px rgba(255,255,255,.07) inset,0 -1px 2px rgba(0,0,0,.45) inset}
+.apple-logo{font-family:-apple-system,BlinkMacSystemFont,'SF Pro',Helvetica,Arial,sans-serif;font-size:1.7rem;line-height:1}
+
+/* ───────── FOOTER ───────── */
+footer{padding:40px;text-align:center;color:var(--text-secondary);font-size:.85rem}
+footer a{color:var(--text-secondary);text-decoration:none;transition:color .3s}
+footer a:hover{color:var(--text-primary)}
+
+/* ───────── RESPONSIVE ───────── */
+@media(max-width:768px){            /* tablet / small-laptop */
+  nav{padding:20px}
+  .hero{padding:40px 20px 80px}
+  .widget-container{width:280px;height:280px}
+  .clock{width:220px;height:220px}
+  .hour-hand{height:70px}
+  .minute-hand{height:95px}
+  .second-hand{height:100px}
+}
+
+@media(max-width:480px){            /* phones */
+  .widget-container{width:260px;height:260px}
+  .clock{width:190px;height:190px}
+  .hour-hand{height:60px}
+  .minute-hand{height:80px}
+  .second-hand{height:85px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-container">
+    <div class="logo">Neumorphic Clock</div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="privacy-policy.html">Privacy</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Neumorphic Clock</h1>
+    <p class="subtitle">Beautifully minimal clock widgets for your iOS home screen</p>
+
+    <!-- Clock widget -->
+    <div class="widget-container">
+      <div class="clock">
+        <div class="minute-markers" id="minute-markers"></div>
+        <div class="clock-hand hour-hand"  id="hour-hand"></div>
+        <div class="clock-hand minute-hand" id="minute-hand"></div>
+        <div class="clock-hand second-hand" id="second-hand"></div>
+        <div class="clock-center"></div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <a href="#" class="cta-button">
+      <span class="apple-logo" aria-hidden="true"></span>
+      Download on&nbsp;App&nbsp;Store
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Neumorphic Clock. All rights reserved. <a href="privacy-policy.html">Privacy Policy</a></p>
+</footer>
+
+<!-- ───────── CLOCK SCRIPT ───────── -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  /* Build dial ticks */
+  const markers   = document.getElementById('minute-markers');
+  const clockEl   = document.querySelector('.clock');
+  const baseRadius= clockEl.offsetWidth / 2;
+
+  for (let i = 0; i < 60; i++) {
+    const longTick = i % 5 === 0;
+    const len      = longTick ? 16 : 8;
+    const tick     = document.createElement('div');
+    tick.className = 'tick';
+    tick.style.height = `${len}px`;
+    tick.style.width  = longTick ? '2px' : '1px';
+
+    const radius = baseRadius - len;  // align outer ends
+    tick.style.transform =
+      `translate(-50%,-50%) rotate(${i * 6}deg) translateY(-${radius}px)`;
+
+    markers.appendChild(tick);
+  }
+
+  /* Animate hands */
+  const hrHand  = document.getElementById('hour-hand');
+  const minHand = document.getElementById('minute-hand');
+  const secHand = document.getElementById('second-hand');
+
+  const update = () => {
+    const now = new Date();
+    const ms  = now.getMilliseconds();
+    const s   = now.getSeconds() + ms / 1000;
+    const m   = now.getMinutes() + s  / 60;
+    const h   = (now.getHours() % 12) + m / 60;
+
+    hrHand .style.transform = `translateX(-50%) rotate(${h * 30}deg)`;
+    minHand.style.transform = `translateX(-50%) rotate(${m * 6}deg)`;
+    secHand.style.transform = `translateX(-50%) rotate(${s * 6}deg)`;
+
+    requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+});
+</script>
+</body>
+</html>
